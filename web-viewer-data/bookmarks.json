@@ -64,8 +64,8 @@
 	],
 	"settings": {
 		"floatingBallPosition": {
-			"x": 1180,
-			"y": 448
+			"x": 1125,
+			"y": 524
 		},
 		"defaultOpacity": 1,
 		"autoHidePanel": true,

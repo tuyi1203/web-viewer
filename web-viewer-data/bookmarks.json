@@ -1,0 +1,79 @@
+{
+	"folders": [
+		{
+			"id": "default",
+			"name": "默认收藏",
+			"order": 1
+		},
+		{
+			"id": "mlcc42b3z5v2ivt3qmc",
+			"name": "搜索",
+			"order": 2
+		},
+		{
+			"id": "mld35675a86gisbez3t",
+			"name": "本地 HTML 页面",
+			"order": 0
+		},
+		{
+			"id": "mld63q160y7s1ilgm07g",
+			"name": "点名游戏",
+			"order": 3
+		},
+		{
+			"id": "mld63z49lhh7c5jz4eh",
+			"name": "英语单词对对碰",
+			"order": 4
+		},
+		{
+			"id": "mld643sy5kynfb7cm84",
+			"name": "数学虚拟仿真实验",
+			"order": 5
+		}
+	],
+	"bookmarks": [
+		{
+			"id": "mlcc4ir0b0fb3jnld8u",
+			"folderId": "mlcc42b3z5v2ivt3qmc",
+			"name": "百度一下，你就知道",
+			"url": "https://www.baidu.com/",
+			"icon": "https://www.baidu.com/favicon.ico",
+			"order": 1,
+			"createdAt": 1770469999596,
+			"updatedAt": 1770473254090
+		},
+		{
+			"id": "mlcdlqfyjdznh9go4w",
+			"folderId": "mlcc42b3z5v2ivt3qmc",
+			"name": "Google",
+			"url": "https://www.google.com/",
+			"icon": "https://www.gstatic.com/images/branding/searchlogo/ico/favicon.ico",
+			"order": 2,
+			"createdAt": 1770472482334,
+			"updatedAt": 1770473254092
+		},
+		{
+			"id": "mld42y7goqxn4wqxa2n",
+			"folderId": "mlcc42b3z5v2ivt3qmc",
+			"name": "搜索 - Microsoft 必应",
+			"url": "https://www.bing.com/",
+			"icon": "https://www.bing.com/sa/simg/favicon-trans-bg-blue-mg-png.png",
+			"order": 2,
+			"createdAt": 1770516955564
+		}
+	],
+	"settings": {
+		"floatingBallPosition": {
+			"x": 1180,
+			"y": 448
+		},
+		"defaultOpacity": 1,
+		"autoHidePanel": true,
+		"defaultUrl": "https://www.baidu.com/",
+		"expandedFolders": [
+			"mld643sy5kynfb7cm84",
+			"mld63z49lhh7c5jz4eh",
+			"mld63q160y7s1ilgm07g"
+		]
+	}
+}

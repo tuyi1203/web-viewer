@@ -1,0 +1,29 @@
+{
+  "name": "web-viewer",
+  "version": "1.0.0",
+  "description": "悬浮网页收藏夹 - 一个精美的Windows桌面应用",
+  "main": "src/main/index.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --inspect=5858",
+    "build": "electron-builder --win --x64",
+    "build:portable": "electron-builder --win portable",
+    "build:all": "electron-builder --win --x64 --ia32"
+  },
+  "keywords": [
+    "electron",
+    "bookmark",
+    "floating",
+    "browser"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "electron-store": "^8.1.0",
+    "sortablejs": "^1.15.0"
+  },
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1"
+  }
+}

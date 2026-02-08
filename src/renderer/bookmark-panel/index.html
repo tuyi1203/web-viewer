@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' https: data:;">
+  <title>收藏夹</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="panel-container">
+    <!-- 头部 -->
+    <div class="panel-header">
+      <h2>收藏夹</h2>
+      <button class="btn-add" id="btnAddBookmark" title="添加收藏">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+      </button>
+    </div>
+
+    <!-- 搜索框 -->
+    <div class="search-box">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <input type="text" id="searchInput" placeholder="搜索收藏...">
+    </div>
+
+    <!-- 书签列表 -->
+    <div class="bookmark-list" id="bookmarkList">
+      <!-- 书签项将通过JS动态渲染 -->
+    </div>
+
+    <!-- 底部 -->
+    <div class="panel-footer">
+      <button class="btn-folder" id="btnAddFolder" title="添加文件夹">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+          <line x1="12" y1="11" x2="12" y2="17"></line>
+          <line x1="9" y1="14" x2="15" y2="14"></line>
+        </svg>
+        新建文件夹
+      </button>
+    </div>
+  </div>
+
+  <!-- 添加/编辑书签弹窗 -->
+  <div class="modal" id="bookmarkModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modalTitle">添加收藏</h3>
+        <button class="btn-close" id="btnCloseModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="bookmarkName">名称</label>
+          <input type="text" id="bookmarkName" placeholder="网站名称">
+        </div>
+        <div class="form-group">
+          <label for="bookmarkUrl">网址</label>
+          <input type="text" id="bookmarkUrl" placeholder="https://example.com">
+        </div>
+        <div class="form-group">
+          <label for="bookmarkFolder">文件夹</label>
+          <select id="bookmarkFolder">
+            <!-- 文件夹选项将动态渲染 -->
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-cancel" id="btnCancelModal">取消</button>
+        <button class="btn btn-save" id="btnSaveBookmark">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 添加文件夹弹窗 -->
+  <div class="modal" id="folderModal">
+    <div class="modal-content modal-small">
+      <div class="modal-header">
+        <h3>新建文件夹</h3>
+        <button class="btn-close" id="btnCloseFolderModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="folderName">文件夹名称</label>
+          <input type="text" id="folderName" placeholder="输入文件夹名称">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-cancel" id="btnCancelFolderModal">取消</button>
+        <button class="btn btn-save" id="btnSaveFolder">创建</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../../node_modules/sortablejs/Sortable.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+{
+  "appId": "com.webviewer.app",
+  "productName": "悬浮网页查看器",
+  "directories": {
+    "output": "dist",
+    "buildResources": "build"
+  },
+  "files": [
+    "src/**/*",
+    "assets/**/*",
+    "package.json"
+  ],
+  "win": {
+    "target": ["nsis", "portable"],
+    "icon": "build/icon.ico",
+    "artifactName": "${productName}-${version}-Setup.${ext}"
+  },
+  "nsis": {
+    "oneClick": false,
+    "allowToChangeInstallationDirectory": true,
+    "createDesktopShortcut": true,
+    "createStartMenuShortcut": true,
+    "shortcutName": "悬浮网页查看器",
+    "perMachine": false,
+    "deleteAppDataOnUninstall": false
+  },
+  "portable": {
+    "artifactName": "${productName}-${version}-Portable.${ext}"
+  }
+}

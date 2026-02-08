@@ -1,0 +1,34 @@
+# Node/Electron
+node_modules/
+dist/
+out/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+
+# Misc
+*.tmp
+*.temp
+*.swp
+*.swo
+
+# Env
+.env
+.env.*
+
+# Packages
+*.asar
+
+nul

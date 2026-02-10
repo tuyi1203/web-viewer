@@ -5,7 +5,63 @@ const bookmarkStore = require('../store/bookmarkStore');
 class FloatingBall {
   constructor() {
     this.window = null;
+    this._topMostGuardTimer = null;
+    this._lastBumpAt = 0;
     this.createWindow();
+  }
+
+  /**
+   * 应用“始终置顶”的策略，尽量确保悬浮球不会被应用内浏览器窗口遮挡
+   */
+  applyTopMostPolicy({ bumpZOrder = false } = {}) {
+    if (!this.window) return;
+    if (this.window.isDestroyed && this.window.isDestroyed()) return;
+    try {
+      this.window.setAlwaysOnTop(true, 'screen-saver', 1);
+    } catch (e) {
+      try {
+        this.window.setAlwaysOnTop(true);
+      } catch (e2) {}
+    }
+    try {
+      this.window.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+    } catch (e) {}
+    try {
+      this.window.setFullScreenable(false);
+    } catch (e) {}
+    if (bumpZOrder) {
+      const now = Date.now();
+      if (now - this._lastBumpAt >= 800) {
+        this._lastBumpAt = now;
+        try {
+          this.window.setAlwaysOnTop(false);
+        } catch (e) {}
+        try {
+          this.window.setAlwaysOnTop(true, 'screen-saver', 1);
+        } catch (e) {}
+        try {
+          this.window.moveTop();
+        } catch (e) {}
+      }
+    }
+  }
+
+  _startTopMostGuard() {
+    if (this._topMostGuardTimer) return;
+    this._topMostGuardTimer = setInterval(() => {
+      if (!this.window) return;
+      if (this.window.isDestroyed && this.window.isDestroyed()) return;
+      this.applyTopMostPolicy();
+      if (this.window.isVisible && this.window.isVisible()) {
+        this.applyTopMostPolicy({ bumpZOrder: true });
+      }
+    }, 700);
+  }
+
+  _stopTopMostGuard() {
+    if (!this._topMostGuardTimer) return;
+    clearInterval(this._topMostGuardTimer);
+    this._topMostGuardTimer = null;
   }
 
   createWindow() {
@@ -43,11 +99,30 @@ class FloatingBall {
     
     // 设置窗口为工具窗口（不显示在任务栏）
     this.window.setSkipTaskbar(true);
+    this.applyTopMostPolicy();
+    this._startTopMostGuard();
+
+    this.window.on('show', () => {
+      this.applyTopMostPolicy({ bumpZOrder: true });
+    });
+
+    this.window.on('focus', () => {
+      this.applyTopMostPolicy({ bumpZOrder: true });
+    });
+
+    this.window.on('blur', () => {
+      this.applyTopMostPolicy({ bumpZOrder: true });
+    });
     
     // 监听窗口关闭 - 不要让窗口真正关闭
     this.window.on('close', (event) => {
       event.preventDefault();
       this.window.hide();
+    });
+
+    this.window.on('closed', () => {
+      this._stopTopMostGuard();
+      this.window = null;
     });
   }
 
@@ -107,7 +182,12 @@ class FloatingBall {
 
   show() {
     if (this.window) {
-      this.window.show();
+      this.applyTopMostPolicy({ bumpZOrder: true });
+      try {
+        this.window.showInactive();
+      } catch (e) {
+        this.window.show();
+      }
     }
   }
 

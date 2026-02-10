@@ -82,7 +82,7 @@ function createWindows() {
     logger.log('BookmarkPanel created');
     
     // 创建浏览器窗口（初始隐藏）
-    browserWindow = new BrowserWindowManager();
+    browserWindow = new BrowserWindowManager({ floatingBall });
     logger.log('BrowserWindow created');
     
     // 注册IPC处理器

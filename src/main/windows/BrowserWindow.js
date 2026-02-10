@@ -3,11 +3,28 @@ const path = require('path');
 const bookmarkStore = require('../store/bookmarkStore');
 
 class BrowserWindowManager {
-  constructor() {
+  constructor(options = {}) {
     this.window = null;
     this.isAlwaysOnTop = true;
     this.isTabletMode = false;
+    this.floatingBall = options.floatingBall || null;
     this.createWindow();
+  }
+
+  /**
+   * 确保悬浮球窗口可见（用于浏览器窗口关闭/隐藏后仍保留入口）
+   */
+  _ensureFloatingBallVisible() {
+    if (this.floatingBall && typeof this.floatingBall.show === 'function') {
+      try {
+        this.floatingBall.show();
+      } catch (e) {}
+      if (typeof this.floatingBall.applyTopMostPolicy === 'function') {
+        try {
+          this.floatingBall.applyTopMostPolicy({ bumpZOrder: true });
+        } catch (e) {}
+      }
+    }
   }
 
   createWindow() {
@@ -50,6 +67,7 @@ class BrowserWindowManager {
       if (this.window) {
         event.preventDefault();
         this.window.hide();
+        this._ensureFloatingBallVisible();
       }
     });
   }
@@ -104,6 +122,7 @@ class BrowserWindowManager {
   minimize() {
     if (this.window) {
       this.window.hide();
+      this._ensureFloatingBallVisible();
     }
   }
 
@@ -117,6 +136,7 @@ class BrowserWindowManager {
   hide() {
     if (this.window) {
       this.window.hide();
+      this._ensureFloatingBallVisible();
     }
   }
  
@@ -186,24 +206,26 @@ class BrowserWindowManager {
   // 移动窗口
   moveBy(deltaX, deltaY) {
     if (this.window) {
-      const [x, y] = this.window.getPosition();
-      this.window.setPosition(x + deltaX, y + deltaY);
+      const b = this.window.getBounds();
+      const w = this._lockedSize ? this._lockedSize.width : b.width;
+      const h = this._lockedSize ? this._lockedSize.height : b.height;
+      this.window.setBounds({ x: b.x + deltaX, y: b.y + deltaY, width: w, height: h }, true);
     }
   }
   
   lockSize() {
     if (this.window) {
-      const [w, h] = this.window.getSize();
-      this.window.setMinimumSize(w, h);
-      this.window.setMaximumSize(w, h);
+      const b = this.window.getBounds();
+      this._lockedSize = { width: b.width, height: b.height };
+      this.window.setResizable(false);
+      this.window.setBounds({ x: b.x, y: b.y, width: b.width, height: b.height }, true);
     }
   }
   
   unlockSize() {
     if (this.window) {
-      this.window.setMinimumSize(400, 300);
-      this.window.setMaximumSize(2147483647, 2147483647);
       this.window.setResizable(false);
+      this._lockedSize = null;
     }
   }
  

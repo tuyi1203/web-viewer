@@ -28,13 +28,17 @@ function readAppConfig() {
 function resolveDataDir() {
   const config = readAppConfig();
   const appRoot = app.getAppPath();
+  const baseDir =
+    process.env.PORTABLE_EXECUTABLE_DIR ||
+    path.dirname(app.getPath('exe')) ||
+    appRoot;
   let targetDir;
   if (config.dataDir) {
     targetDir = path.isAbsolute(config.dataDir)
       ? config.dataDir
-      : path.join(appRoot, config.dataDir);
+      : path.join(baseDir, config.dataDir);
   } else {
-    targetDir = path.join(appRoot, 'web-viewer-data');
+    targetDir = path.join(baseDir, 'web-viewer-data');
   }
 
   try {

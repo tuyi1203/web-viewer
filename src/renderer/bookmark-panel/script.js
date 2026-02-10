@@ -18,6 +18,8 @@ function dlog(...args) {
 // DOM元素
 const bookmarkList = document.getElementById('bookmarkList');
 const searchInput = document.getElementById('searchInput');
+const btnImportBookmarks = document.getElementById('btnImportBookmarks');
+const btnExportBookmarks = document.getElementById('btnExportBookmarks');
 const btnAddBookmark = document.getElementById('btnAddBookmark');
 const btnAddFolder = document.getElementById('btnAddFolder');
 
@@ -436,6 +438,38 @@ function escapeHtml(text) {
   return div.innerHTML;
 }
 
+/**
+ * 触发导入书签：支持 Chrome 导出 HTML 与应用备份 JSON
+ */
+async function handleImportBookmarks() {
+  dlog('handleImportBookmarks()');
+  try {
+    const result = await window.api.importBookmarks();
+    if (!result || result.canceled) return;
+    await loadData();
+    renderBookmarks(searchInput.value);
+    alert(
+      `导入完成（${result.format}）\n新增文件夹：${result.addedFolders}\n新增书签：${result.addedBookmarks}\n跳过重复：${result.skippedBookmarks}`
+    );
+  } catch (e) {
+    alert(`导入失败：${e && e.message ? e.message : String(e)}`);
+  }
+}
+
+/**
+ * 触发导出书签：应用备份(JSON) 或 Chrome 书签(HTML)
+ */
+async function handleExportBookmarks() {
+  dlog('handleExportBookmarks()');
+  try {
+    const result = await window.api.exportBookmarks();
+    if (!result || result.canceled) return;
+    alert(`导出完成（${result.format}）\n文件：${result.filePath}`);
+  } catch (e) {
+    alert(`导出失败：${e && e.message ? e.message : String(e)}`);
+  }
+}
+
 // 设置事件监听
 function setupEventListeners() {
   dlog('setupEventListeners() begin');
@@ -449,6 +483,16 @@ function setupEventListeners() {
   btnAddBookmark.addEventListener('click', () => {
     dlog('btnAddBookmark click');
     showAddBookmarkModal();
+  });
+
+  // 导入/导出
+  btnImportBookmarks.addEventListener('click', () => {
+    dlog('btnImportBookmarks click');
+    handleImportBookmarks();
+  });
+  btnExportBookmarks.addEventListener('click', () => {
+    dlog('btnExportBookmarks click');
+    handleExportBookmarks();
   });
   
   // 添加文件夹按钮

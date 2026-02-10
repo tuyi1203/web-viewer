@@ -30,6 +30,10 @@ contextBridge.exposeInMainWorld('api', {
   
   // 更新设置
   updateSettings: (data) => ipcRenderer.invoke('settings:update', data),
+
+  // 导入/导出
+  importBookmarks: () => ipcRenderer.invoke('bookmark:import'),
+  exportBookmarks: () => ipcRenderer.invoke('bookmark:export'),
   
   // 调试日志
   debugLog: (payload) => ipcRenderer.send('log:debug', payload)

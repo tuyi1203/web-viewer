@@ -1,5 +1,12 @@
-const { ipcMain } = require('electron');
+const { ipcMain, dialog, app } = require('electron');
+const fs = require('fs');
+const path = require('path');
 const logger = require('../utils/logger');
+const {
+  generateChromeBookmarksHtml,
+  exportAppBackupJson,
+  importBookmarksFromFile
+} = require('../utils/bookmarkTransfer');
 
 function registerIpcHandlers({ floatingBall, bookmarkPanel, browserWindow, bookmarkStore }) {
   logger.log('Registering IPC handlers');
@@ -35,6 +42,77 @@ function registerIpcHandlers({ floatingBall, bookmarkPanel, browserWindow, bookm
       bookmarks: data.bookmarks.length
     });
     return data;
+  });
+
+  /**
+   * 导出书签到文件（支持：应用备份 JSON / Chrome 书签 HTML）
+   */
+  ipcMain.handle('bookmark:export', async () => {
+    const choice = await dialog.showMessageBox({
+      type: 'question',
+      title: '导出书签',
+      message: '选择导出格式',
+      buttons: ['应用备份(JSON)', 'Chrome书签(HTML)', '取消'],
+      defaultId: 0,
+      cancelId: 2,
+      noLink: true
+    });
+    if (choice.response === 2) {
+      return { canceled: true };
+    }
+
+    const format = choice.response === 1 ? 'chrome-html' : 'app-json';
+    const now = new Date();
+    const ts = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}_${String(
+      now.getHours()
+    ).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}`;
+    const ext = format === 'chrome-html' ? 'html' : 'json';
+    const defaultPath = path.join(app.getPath('documents'), `web-viewer-bookmarks_${ts}.${ext}`);
+
+    const save = await dialog.showSaveDialog({
+      title: '保存导出文件',
+      defaultPath,
+      filters:
+        format === 'chrome-html'
+          ? [{ name: 'HTML', extensions: ['html', 'htm'] }]
+          : [{ name: 'JSON', extensions: ['json'] }]
+    });
+    if (save.canceled || !save.filePath) {
+      return { canceled: true };
+    }
+
+    const data = bookmarkStore.getAllData();
+    const content =
+      format === 'chrome-html'
+        ? generateChromeBookmarksHtml({ folders: data.folders, bookmarks: data.bookmarks, title: 'Nimbus Web Viewer Bookmarks' })
+        : exportAppBackupJson(data);
+    fs.writeFileSync(save.filePath, content, 'utf-8');
+    logger.log('bookmark:export ->', { format, filePath: save.filePath });
+    return { canceled: false, format, filePath: save.filePath };
+  });
+
+  /**
+   * 从文件导入书签（支持：Chrome 导出的 HTML、应用导出的 JSON）
+   */
+  ipcMain.handle('bookmark:import', async () => {
+    const open = await dialog.showOpenDialog({
+      title: '导入书签',
+      properties: ['openFile'],
+      filters: [
+        { name: '书签文件', extensions: ['html', 'htm', 'json'] },
+        { name: '所有文件', extensions: ['*'] }
+      ]
+    });
+    if (open.canceled || !open.filePaths || open.filePaths.length === 0) {
+      return { canceled: true };
+    }
+
+    const filePath = open.filePaths[0];
+    const raw = fs.readFileSync(filePath, 'utf-8');
+    const result = importBookmarksFromFile({ filePath, fileContent: raw, bookmarkStore });
+    logger.log('bookmark:import ->', { filePath, ...result });
+    bookmarkPanel.refresh();
+    return { canceled: false, filePath, ...result };
   });
 
   // 检查是否收藏

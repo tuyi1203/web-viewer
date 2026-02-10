@@ -1,4 +1,4 @@
-const { BrowserWindow, screen } = require('electron');
+const { BrowserWindow, screen, app } = require('electron');
 const path = require('path');
 const bookmarkStore = require('../store/bookmarkStore');
 
@@ -80,6 +80,7 @@ class FloatingBall {
       height: 80,
       x,
       y,
+      title: '\u200B',
       transparent: true,
       frame: false,
       alwaysOnTop: true,
@@ -116,6 +117,7 @@ class FloatingBall {
     
     // 监听窗口关闭 - 不要让窗口真正关闭
     this.window.on('close', (event) => {
+      if (app.isQuitting) return;
       event.preventDefault();
       this.window.hide();
     });

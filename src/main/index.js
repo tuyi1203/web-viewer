@@ -40,6 +40,16 @@ let contextMenu = null;
 // 禁用硬件加速以避免透明窗口问题
 app.disableHardwareAcceleration();
 
+/**
+ * 标记应用是否正在退出：用于绕过各窗口的 close -> hide 拦截
+ */
+function setupQuitFlags() {
+  app.isQuitting = false;
+  app.on('before-quit', () => {
+    app.isQuitting = true;
+  });
+}
+
 // 初始化日志开关
 try {
   const settings = bookmarkStore.getSettings();
@@ -107,6 +117,7 @@ function createWindows() {
 
 app.whenReady().then(() => {
   logger.log('App ready');
+  setupQuitFlags();
   createWindows();
   
   app.on('activate', () => {

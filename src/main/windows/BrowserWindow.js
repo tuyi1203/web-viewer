@@ -1,4 +1,4 @@
-const { BrowserWindow } = require('electron');
+const { BrowserWindow, app } = require('electron');
 const path = require('path');
 const bookmarkStore = require('../store/bookmarkStore');
 
@@ -65,6 +65,7 @@ class BrowserWindowManager {
     // 阻止窗口关闭，改为隐藏
     this.window.on('close', (event) => {
       if (this.window) {
+        if (app.isQuitting) return;
         event.preventDefault();
         this.window.hide();
         this._ensureFloatingBallVisible();

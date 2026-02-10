@@ -1,4 +1,4 @@
-const { BrowserWindow, screen } = require('electron');
+const { BrowserWindow, screen, app } = require('electron');
 const path = require('path');
 const logger = require('../utils/logger');
 
@@ -54,6 +54,7 @@ class BookmarkPanel {
 
     // 阻止窗口真正关闭
     this.window.on('close', (event) => {
+      if (app.isQuitting) return;
       event.preventDefault();
       this.hide();
     });
